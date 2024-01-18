@@ -5,5 +5,36 @@ The chunk size and paste interval can be adjusted with '-c' and '-sb' options to
 
 # Usecase
 When you want to copy files to a Kubernets pod that has no internet access but you have a terminal on that pod.
+
+
 ![img1](https://github.com/BuFuuu/paster/assets/6349896/363ee266-f6a6-4909-bced-d36a89db26d4)
 ![img2](https://github.com/BuFuuu/paster/assets/6349896/482eb465-e5f9-4029-b1ec-dd19e09a3782)
+
+# Options:
+
+- `--list-windows, -l`  
+  List all open windows titles.
+
+- `--sleep-after-first-window, -s`  
+  Sleep time after first window activation. Default is 1.0 seconds.
+
+- `--sleep-between-chunks, -sb`  
+  Sleep time between chunks. Default is 1.0 seconds (1s).
+
+- `--chunk-size, -c`  
+  Size of each chunk in KB. Default is 800 (0.8MB).
+
+- `--file-path, -f`  
+  Path to the file to be processed.
+
+- `--target-window-title, -t`  
+  Title of the target window.
+
+- `--manual-activation, -m`  
+  Do not activate the window. Just start pasting. User needs to activate the window.
+
+- `--shift-paste, -sp`  
+  Use Ctrl+Shift+V to paste instead of Ctrl+V.
+
+- `--echo-wrap, -ew`  
+  Wrap in an `echo -n "base64 content" >> filename` statement and send RETURN after pasting.
