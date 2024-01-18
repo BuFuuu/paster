@@ -4,7 +4,7 @@ This program base64 encodes a file, then pastes chunks it into an activated wind
 The chunk size and paste interval can be adjusted with '-c' and '-sb' options to suit different needs. Best to use with `stty -echo` because this often is a big bottleneck.
 
 # Usecase
-When you want to copy files to a Kubernets pod that has no internet access but you have a terminal on that pod.
+E.g., when you want to copy files to a Kubernets pod that has no internet access but you have a terminal on that pod.
 
 **Example** -c 60 = 60KB chunks every -sb = 0.5 seconds. Larger files take some time but I don't know a better way:
 
