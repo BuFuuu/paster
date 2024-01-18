@@ -5,4 +5,5 @@ The chunk size and paste interval can be adjusted with '-c' and '-sb' options to
 
 # Usecase
 When you want to copy files to a Kubernets pod that has no internet access but you have a terminal on that pod.
-
+![img1](https://github.com/BuFuuu/paster/assets/6349896/363ee266-f6a6-4909-bced-d36a89db26d4)
+![img2](https://github.com/BuFuuu/paster/assets/6349896/482eb465-e5f9-4029-b1ec-dd19e09a3782)
