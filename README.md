@@ -1,41 +1,33 @@
 # paster
-This program base64 encodes a file, then pastes chunks it into an activated window using 'Ctrl+V'. Ideal for transferring files to text-restricted inputs. Users should zip files first for efficiency. The window gets activated automatically when the window title is set or by clicking on it (-m flag).
+This tool base64 encodes a file and pastes it into another application in chunks. Zip files first for efficiency. The target window will be focused automatically unless `-m` is used.
 
-The chunk size and paste interval can be adjusted with '-c' and '-sb' options to suit different needs. Best to use with `stty -echo` because this often is a big bottleneck.
+Chunk size and delays are configurable with `-C` and `-D`. Use `stty -echo` for best results on slow terminals.
 
 # Usecase
-E.g., when you want to copy files to a Kubernets pod that has no internet access but you have a terminal on that pod.
+E.g., when you want to copy files to a Kubernetes pod that has no internet access but you have a terminal on that pod.
 
-**Example** -c 60 = 60KB chunks every -sb = 0.5 seconds. Larger files take some time but I don't know a better way:
+**Example** `-C 60` = 60KB chunks every `-D 0.5` seconds.
 
 ![img1](https://github.com/BuFuuu/paster/assets/6349896/363ee266-f6a6-4909-bced-d36a89db26d4)
 ![img2](https://github.com/BuFuuu/paster/assets/6349896/482eb465-e5f9-4029-b1ec-dd19e09a3782)
 
-# Options:
+# Options
 
-- `--list-windows, -l`  
-  List all open windows titles.
-
-- `--sleep-after-first-window, -s`  
-  Sleep time after first window activation. Default is 1.0 seconds.
-
-- `--sleep-between-chunks, -sb`  
-  Sleep time between chunks. Default is 1.0 seconds (1s).
-
-- `--chunk-size, -c`  
-  Size of each chunk in KB. Default is 800 (0.8MB).
-
-- `--file-path, -f`  
-  Path to the file to be processed.
-
-- `--target-window-title, -t`  
+- `-L, --list`
+  List open window titles and show decode examples.
+- `-A, --after <sec>`  
+  Delay after window activation. Default 1 second.
+- `-D, --delay <sec>`  
+  Delay between chunks. Default 1 second.
+- `-C, --chunk <kb>`  
+  Chunk size in KB. Default 800.
+- `-p, --path <file>`  
+  File to transfer.
+- `-w, --window <title>`  
   Title of the target window.
-
-- `--manual-activation, -m`  
-  Do not activate the window. Just start pasting. User needs to activate the window.
-
-- `--shift-paste, -sp`  
-  Use Ctrl+Shift+V to paste instead of Ctrl+V.
-
-- `--echo-wrap, -ew`  
-  Wrap in an `echo -n "base64 content" >> filename` statement and send RETURN after pasting.
+- `-m, --manual`  
+  Do not activate the window automatically.
+- `-S, --shift`  
+  Use Ctrl+Shift+V instead of Ctrl+V.
+- `-E, --echo <file>`  
+  Wrap each chunk in an `echo` command and send ENTER.
