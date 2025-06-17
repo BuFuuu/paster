@@ -205,13 +205,16 @@ class Program
 
     static string FormatBytes(long bytes)
     {
-        string[] Suffix = { "B", "KB", "MB", "GB", "TB" };
-        int i;
-        double dblSByte = bytes;
-        for (i = 0; i < Suffix.Length && bytes >= 1024; i++, bytes /= 1024)
+        string[] suffix = { "B", "KB", "MB", "GB", "TB", "PB", "EB" };
+        double size = bytes;
+        int i = 0;
+
+        while (i < suffix.Length - 1 && size >= 1024)
         {
-            dblSByte = bytes / 1024.0;
+            size /= 1024;
+            i++;
         }
-        return $"{dblSByte:0.##} {Suffix[i]}";
+
+        return $"{size:0.##} {suffix[i]}";
     }
 }
