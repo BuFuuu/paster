@@ -16,19 +16,31 @@ class Program
 
     static void PrintHelp()
     {
-        Console.WriteLine("Usage: YourApplication [options]");
+        Console.WriteLine("Usage: paster -p FILE -w WINDOW [options]");
         Console.WriteLine("Options:");
-        Console.WriteLine("  --list-windows, -l\t\tList all open windows titles");
-        Console.WriteLine("  --sleep-after-first-window, -s\tSleep time after first window activation. Default is 1.0 seconds");
-        Console.WriteLine("  --sleep-between-chunks, -sb\tSleep time between chunks. Default is 1.0 seconds (1s)");
-        Console.WriteLine("  --chunk-size, -c\t\tSize of each chunk in KB. Default is 800 (0.8MB)");
-        Console.WriteLine("  --file-path, -f\t\tPath to the file to be processed");
-        Console.WriteLine("  --target-window-title, -t\tTitle of the target window");
-        Console.WriteLine("  --manual-activation, -m\tDo not activate the window. Just start pasting. User needs to activate the window");
-        Console.WriteLine("  --shift-paste, -sp\tUse Ctrl+Shift+V to paste instead of Ctrl+V");
-        Console.WriteLine("  --echo-wrap, -ew\tWrap in a echo -n \"base64 content\" >> filename statement and send RETURN after pasting");
+        Console.WriteLine("  -L, --list       List open window titles");
+        Console.WriteLine("  -A, --after SEC  Delay after window activation (default 1)");
+        Console.WriteLine("  -D, --delay SEC  Delay between chunks (default 1)");
+        Console.WriteLine("  -C, --chunk KB   Chunk size in KB (default 800)");
+        Console.WriteLine("  -p, --path FILE  File to send");
+        Console.WriteLine("  -w, --window T   Target window title");
+        Console.WriteLine("  -m, --manual     Do not auto focus the window");
+        Console.WriteLine("  -S, --shift      Use Ctrl+Shift+V for pasting");
+        Console.WriteLine("  -E, --echo FILE  Wrap chunk in echo >> FILE and press Enter");
+        Console.WriteLine();
+        Console.WriteLine("Example: paster -p data.zip -w \"Terminal\" -C 60 -D 0.5");
+        Console.WriteLine();
+        Console.WriteLine("This program base64 encodes a file and pastes it into the target window in chunks.");
+    }
 
-        Console.WriteLine("\nThis program base64 encodes a file, then pastes it into an activated window using 'Ctrl+V'. Ideal for transferring files to text-restricted inputs, it divides the content into manageable chunks. Users should zip files first for efficiency. The chunk size and paste interval can be adjusted with '-c' and '-sb' options to suit different needs, ensuring a smooth and customizable file transfer process.");
+    static void ShowWindowInfo()
+    {
+        Console.WriteLine("PowerShell command to list open windows:");
+        Console.WriteLine("Get-Process | Where-Object { $_.MainWindowTitle -ne \"\" } | ForEach-Object { $_.MainWindowTitle }");
+        Console.WriteLine();
+        Console.WriteLine("Base64 decode examples:");
+        Console.WriteLine("powershell:\t[System.IO.File]::WriteAllBytes('out.zip', [System.Convert]::FromBase64String([System.IO.File]::ReadAllText('transferred.b64')))");
+        Console.WriteLine("bash:\t\tbase64 -d transferred.b64 > out.zip");
     }
 
     [STAThread]
@@ -37,7 +49,7 @@ class Program
         bool listWindows = false;
         double sleepAfterFirstWindow = 1.0;
         double sleepBetweenChunks = 1.0;
-        int chunkSize = 800; // Default chunk size in bytes
+        int chunkSize = 800; // Default chunk size in KB
         string filePath = null;
         string targetWindowTitle = null;
         bool manualActivation = false;
@@ -55,53 +67,48 @@ class Program
         {
             switch (args[i])
             {
-                case "-l":
-                case "--list-windows":
+                case "-L":
+                case "--list":
                     listWindows = true;
                     break;
-                case "-s":
-                case "--sleep-after-first-window":
+                case "-A":
+                case "--after":
                     if (i + 1 < args.Length) { sleepAfterFirstWindow = double.Parse(args[++i], CultureInfo.InvariantCulture); }
                     break;
-                case "-sb":
-                case "--sleep-between-chunks":
+                case "-D":
+                case "--delay":
                     if (i + 1 < args.Length) { sleepBetweenChunks = double.Parse(args[++i], CultureInfo.InvariantCulture); }
                     break;
-                case "-c":
-                case "--chunk-size":
+                case "-C":
+                case "--chunk":
                     chunkSize = int.Parse(args[++i]);
                     break;
-                case "-f":
-                case "--file-path":
+                case "-p":
+                case "--path":
                     filePath = args[++i];
                     break;
-                case "-t":
-                case "--target-window-title":
+                case "-w":
+                case "--window":
                     targetWindowTitle = args[++i];
                     break;
                 case "-m":
-                case "--manual-activation":
+                case "--manual":
                     manualActivation = true;
                     break;
-                case "-sp":
-                case "--shift-paste":
+                case "-S":
+                case "--shift":
                     useShiftPaste = true;
                     break;
-                case "-ew":
-                case "--echo-wrap":
-                    if (i + 1 < args.Length) { echoWrapFilename = args[++i]; } else { Console.WriteLine("echo-wrap needs a file name!"); return; }
+                case "-E":
+                case "--echo":
+                    if (i + 1 < args.Length) { echoWrapFilename = args[++i]; } else { Console.WriteLine("echo requires a file name!"); return; }
                     break;
             }
         }
 
         if (listWindows)
         {
-            Console.WriteLine("PowerShell command to list open windows:");
-            Console.WriteLine("Get-Process | Where-Object { $_.MainWindowTitle -ne \"\" } | ForEach-Object { $_.MainWindowTitle }");
-            Console.WriteLine("");
-            Console.WriteLine("Base64 decode examples:");
-            Console.WriteLine("powershell:\t[System.IO.File]::WriteAllBytes('out.zip', [System.Convert]::FromBase64String([System.IO.File]::ReadAllText('transfered.b64')))");
-            Console.WriteLine("bash:\t\tbase64 -d transfered.b64 > out.zip");
+            ShowWindowInfo();
             return; // Exit the program
         }
 
@@ -120,12 +127,7 @@ class Program
 
         if (listWindows)
         {
-            Console.WriteLine("PowerShell command to list open windows:");
-            Console.WriteLine("Get-Process | Where-Object { $_.MainWindowTitle -ne \"\" } | ForEach-Object { $_.MainWindowTitle }");
-            Console.WriteLine("");
-            Console.WriteLine("Base64 decode examples:");
-            Console.WriteLine("powershell:\t[System.IO.File]::WriteAllBytes('out.zip', [System.Convert]::FromBase64String([System.IO.File]::ReadAllText('transfered.b64')))");
-            Console.WriteLine("bash:\t\tbase64 -d transfered.b64 > out.zip #4664");
+            ShowWindowInfo();
             return; // Exit the program
         }
 
